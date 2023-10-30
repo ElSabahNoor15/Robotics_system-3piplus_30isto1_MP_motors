@@ -107,9 +107,11 @@ void updateCoordinates() {
 
   // Update the robot's orientation (theta)
   deltaTheta = (leftDistance - rightDistance) / DISTANCE_BET_WHEELS;
-  // Calculate the average distance
-  if(leftDistance<0){leftDistance = -leftDistance;}
-  if(rightDistance<0){rightDistance = -rightDistance;}
+//  // Calculate the average distance
+//  if(leftDistance<0){leftDistance = -leftDistance;}
+//  else{return leftDistance;}
+//  if(rightDistance<0){rightDistance = -rightDistance;}
+//  else{return rightDistance;}
   avgDistance =  leftDistance + rightDistance/ 2.0;
   
   // Update the (x, y) coordinates based on the distance and orientation
@@ -228,7 +230,7 @@ void linefollowing(){
  
   //unsigned long bot_moving_start_time = millis();
   int BiasPWM = 22;
-  int MaxTurnPWM = 40;
+  int MaxTurnPWM = 37;
   int leftMinPWM = 17;
   int rightMinPWM = 23;
 
@@ -249,7 +251,7 @@ void linefollowing(){
     setMotorPower(leftMinPWM,-(rightMinPWM));
     updateCoordinates();
     }  //clockwise
-  else if(readLineSensor(2)<700 && avgDistance>1350){
+  else if(readLineSensor(2)<720 && avgDistance>2000){
     setMotorPower(0,0);    
     updateCoordinates();
     delay(5000);   
@@ -280,7 +282,7 @@ void turnToOrigin() {
   // Perform the turn
   if(targetTheta>0){
     while (targetTheta > 0.05) { // Adjust the threshold for precision
-    setMotorPower(18,-24);
+    setMotorPower(17,-23);
     updateCoordinates(); // Update orientation based on encoder data
     targetTheta -= targetTheta;
     }
@@ -290,7 +292,7 @@ void turnToOrigin() {
   else{
     while (targetTheta < -0.05) { // Adjust the threshold for precision
   
-    setMotorPower(-18,24);
+    setMotorPower(-17,23);
     updateCoordinates(); // Update orientation based on encoder data
     targetTheta -= targetTheta;
     }
@@ -324,32 +326,32 @@ void backToOrigin(){
 
 
 //Section includes working of the robot using different states
-//void loop(){
-//  
-//  switch (currentState) {
-//    case idle:
-//      updateCoordinates();
-//      currentState = movingForward;
-//      break;
-//
-//    case movingForward:
-//      driveForward();
-//      updateCoordinates();
-//      currentState = followingLine;
-//      break;
-//
-//    case followingLine:
-//      linefollowing();
-//      // Assuming the robot needs to return to its origin (0,0) after covering a certain distance
-//      if(readLineSensor(2)<730 && avgDistance>1350){
-//        currentState = turningToOrigin;
-//        }
-//      break;
-//
+void loop(){
+  
+  switch (currentState) {
+    case idle:
+      updateCoordinates();
+      currentState = movingForward;
+      break;
+
+    case movingForward:
+      driveForward();
+      updateCoordinates();
+      currentState = followingLine;
+      break;
+
+    case followingLine:
+      linefollowing();
+      // Assuming the robot needs to return to its origin (0,0) after covering a certain distance
+      if(readLineSensor(2)<720 && avgDistance>2000){
+        currentState = turningToOrigin;
+        }
+      break;
+
 //    case turningToOrigin:
 //
 //      turnToOrigin();
-//      if(readLineSensor(2)<730 && avgDistance>1350){
+//      if(readLineSensor(2)<730 && avgDistance>1550){
 //        currentState = comingToOrigin;
 //        }
 //          
@@ -360,14 +362,14 @@ void backToOrigin(){
 //      delay(2000);
 //      break;
 //    // Stop the motors after reaching the origin
-//  
-//  while(1){setMotorPower(0, 0);}
-//  }
-//  
-//}
-
-void loop(){
-
-  //updateCoordinates();
-  turnToOrigin();
+  
+  while(1){setMotorPower(0, 0);}
   }
+  
+}
+
+//void loop(){
+//
+//  //updateCoordinates();
+//  turnToOrigin();
+//  }
